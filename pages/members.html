@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Member Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="books.html"><i class="fas fa-book"></i> Books</a></li>
+                <li><a href="members.html" class="active"><i class="fas fa-users"></i> Members</a></li>
+                <li><a href="transactions.html"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>Member Management</h2>
+            <div class="action-buttons">
+                <button id="addMemberBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Register New Member
+                </button>
+                <div class="search-box">
+                    <input type="text" id="memberSearch" placeholder="Search members...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <div id="memberListSection">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="suspended">Suspended</option>
+                        <option value="graduated">Graduated</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="typeFilter">Member Type:</label>
+                    <select id="typeFilter">
+                        <option value="all">All Types</option>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="staff">Staff</option>
+                        <option value="guest">Guest</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sortBy">Sort By:</label>
+                    <select id="sortBy">
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="date_newest">Join Date (Newest)</option>
+                        <option value="date_oldest">Join Date (Oldest)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>ID Number</th>
+                            <th>Expiry Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Member Modal -->
+        <div id="memberModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Register New Member</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="memberForm">
+                        <input type="hidden" id="memberId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name*</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email*</label>
+                                <input type="email" id="email" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="memberType">Member Type*</label>
+                                <select id="memberType" required>
+                                    <option value="student">Student</option>
+                                    <option value="faculty">Faculty</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="guest">Guest</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="idNumber">ID Number</label>
+                                <input type="text" id="idNumber">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department/Program</label>
+                                <input type="text" id="department">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" rows="2"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="status">Status*</label>
+                                <select id="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="suspended">Suspended</option>
+                                    <option value="graduated">Graduated</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="expiryDateGroup">
+                                <label for="expiryDate">Membership Expiry</label>
+                                <input type="date" id="expiryDate" disabled>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                            <button type="submit" class="btn-primary" id="saveBtn">Save Member</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content small-modal">
+                <div class="modal-header">
+                    <h3>Confirm Delete</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this member? This action cannot be undone.</p>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                        <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/members.js"></script>
+
+    <script>
+        // DOM Elements
+        const membersTableBody = document.getElementById('membersTableBody');
+        const addMemberBtn = document.getElementById('addMemberBtn');
+        const memberSearch = document.getElementById('memberSearch');
+        const searchBtn = document.getElementById('searchBtn');
+        const statusFilter = document.getElementById('statusFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const sortBy = document.getElementById('sortBy');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+        
+        // Modal Elements
+        const memberModal = document.getElementById('memberModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const memberForm = document.getElementById('memberForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const expiryDateInput = document.getElementById('expiryDate');
+        
+        // Pagination variables
+        let currentPage = 1;
+        const membersPerPage = 10;
+        let allMembers = [];
+        let filteredMembers = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMembers();
+            setupEventListeners();
+        });
+
+        function loadMembers() {
+            getAllMembers().then(members => {
+                allMembers = members;
+                applyFilters();
+            }).catch(error => {
+                alert('Error loading members: ' + error.message);
+            });
+        }
+
+        function applyFilters() {
+            // Apply status filter
+            const statusValue = statusFilter.value;
+            // Apply type filter
+            const typeValue = typeFilter.value;
+            
+            filteredMembers = allMembers.filter(member => {
+                let statusMatch = true;
+                let typeMatch = true;
+                
+                if (statusValue !== 'all') {
+                    statusMatch = member.status === statusValue;
+                }
+                
+                if (typeValue !== 'all') {
+                    typeMatch = member.memberType === typeValue;
+                }
+                
+                return statusMatch && typeMatch;
+            });
+
+            // Apply search filter if any
+            const searchTerm = memberSearch.value.trim().toLowerCase();
+            if (searchTerm) {
+                filteredMembers = filteredMembers.filter(member => {
+                    return member.name.toLowerCase().includes(searchTerm) || 
+                           member.email.toLowerCase().includes(searchTerm) ||
+                           (member.idNumber && member.idNumber.toLowerCase().includes(searchTerm));
+                });
+            }
+
+            // Apply sorting
+            const sortValue = sortBy.value;
+            filteredMembers.sort((a, b) => {
+                switch (sortValue) {
+                    case 'name_asc':
+                        return a.name.localeCompare(b.name);
+                    case 'name_desc':
+                        return b.name.localeCompare(a.name);
+                    case 'date_newest':
+                        return (b.joinDate || 0) - (a.joinDate || 0);
+                    case 'date_oldest':
+                        return (a.joinDate || 0) - (b.joinDate || 0);
+                    default:
+                        return 0;
+                }
+            });
+
+            currentPage = 1;
+            renderMembersTable();
+            updatePagination();
+        }
+
+        function renderMembersTable() {
+            membersTableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * membersPerPage;
+            const endIndex = Math.min(startIndex + membersPerPage, filteredMembers.length);
+            const membersToDisplay = filteredMembers.slice(startIndex, endIndex);
+
+            if (membersToDisplay.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" class="no-results">No members found matching your criteria</td>`;
+                membersTableBody.appendChild(row);
+                return;
+            }
+
+            membersToDisplay.forEach(member => {
+                const expiryDate = member.expiryDate ? new Date(member.expiryDate) : null;
+                const expiryFormatted = expiryDate ? expiryDate.toLocaleDateString() : 'N/A';
+                
+                const isExpired = expiryDate && expiryDate < new Date();
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.email}</td>
+                    <td>${member.memberType.charAt(0).toUpperCase() + member.memberType.slice(1)}</td>
+                    <td class="${member.status}">${member.status.toUpperCase()}</td>
+                    <td>${member.idNumber || 'N/A'}</td>
+                    <td class="${isExpired ? 'expired' : ''}">${expiryFormatted}</td>
+                    <td class="actions">
+                        <button class="btn-icon edit-btn" data-id="${member.id}" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon delete-btn" data-id="${member.id}" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button class="btn-icon view-btn" data-id="${member.id}" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                membersTableBody.appendChild(row);
+            });
+
+            // Add event listeners to action buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => openDeleteModal(btn.dataset.id));
+            });
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => viewMemberDetails(btn.dataset.id));
+            });
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
+            
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+        }
+
+        function openAddModal() {
+            modalTitle.textContent = 'Register New Member';
+            memberForm.reset();
+            document.getElementById('memberId').value = '';
+            document.getElementById('status').value = 'active';
+            
+            // Set default expiry date based on member type
+            updateExpiryDatePreview('student');
+            
+            memberModal.style.display = 'block';
+        }
+
+        function openEditModal(memberId) {
+            getMemberById(memberId).then(member => {
+                modalTitle.textContent = 'Edit Member';
+                document.getElementById('memberId').value = member.id;
+                document.getElementById('name').value = member.name;
+                document.getElementById('email').value = member.email;
+                document.getElementById('memberType').value = member.memberType;
+                document.getElementById('idNumber').value = member.idNumber || '';
+                document.getElementById('phone').value = member.phone || '';
+                document.getElementById('department').value = member.department || '';
+                document.getElementById('address').value = member.address || '';
+                document.getElementById('status').value = member.status || 'active';
+                
+                // Set expiry date
+                if (member.expiryDate) {
+                    const expiryDate = new Date(member.expiryDate);
+                    const formattedDate = expiryDate.toISOString().split('T')[0];
+                    expiryDateInput.value = formattedDate;
+                }
+                
+                memberModal.style.display = 'block';
+            }).catch(error => {
+                alert('Error loading member: ' + error.message);
+            });
+        }
+
+        function openDeleteModal(memberId) {
+            deleteModal.dataset.memberId = memberId;
+            deleteModal.style.display = 'block';
+        }
+
+        function viewMemberDetails(memberId) {
+            window.location.href = `member-details.html?id=${memberId}`;
+        }
+
+        function updateExpiryDatePreview(memberType) {
+            const expiryDate = new Date();
+            
+            switch (memberType) {
+                case 'student':
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 2);
+                    break;
+                case 'faculty':
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 5);
+                    break;
+                case 'staff':
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 3);
+                    break;
+                case 'guest':
+                    expiryDate.setMonth(expiryDate.getMonth() + 6);
+                    break;
+                default:
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            }
+            
+            const formattedDate = expiryDate.toISOString().split('T')[0];
+            expiryDateInput.value = formattedDate;
+        }
+
+        function setupEventListeners() {
+            // Add member button
+            addMemberBtn.addEventListener('click', openAddModal);
+
+            // Search functionality
+            searchBtn.addEventListener('click', applyFilters);
+            memberSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') applyFilters();
+            });
+
+            // Filter and sort changes
+            statusFilter.addEventListener('change', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+            sortBy.addEventListener('change', applyFilters);
+
+            // Member type change listener
+            document.getElementById('memberType').addEventListener('change', (e) => {
+                updateExpiryDatePreview(e.target.value);
+            });
+
+            // Pagination buttons
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderMembersTable();
+                    updatePagination();
+                }
+            });
+            nextPageBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderMembersTable();
+                    updatePagination();
+                }
+            });
+
+            // Member form submission
+            memberForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const memberId = document.getElementById('memberId').value;
+                const memberData = {
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    memberType: document.getElementById('memberType').value,
+                    idNumber: document.getElementById('idNumber').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    department: document.getElementById('department').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    status: document.getElementById('status').value,
+                    expiryDate: new Date(expiryDateInput.value).getTime()
+                };
+
+                // Validate required fields
+                if (!memberData.name || !memberData.email || !memberData.memberType) {
+                    alert('Name, email, and member type are required fields');
+                    return;
+                }
+
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(memberData.email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                if (memberId) {
+                    // Update existing member
+                    updateMember(memberId, memberData)
+                        .then(() => {
+                            memberModal.style.display = 'none';
+                            loadMembers();
+                        })
+                        .catch(error => {
+                            alert('Error updating member: ' + error.message);
+                        });
+                } else {
+                    // Add new member
+                    registerMember(memberData)
+                        .then(() => {
+                            memberModal.style.display = 'none';
+                            loadMembers();
+                        })
+                        .catch(error => {
+                            alert('Error adding member: ' + error.message);
+                        });
+                }
+            });
+
+            // Delete confirmation
+            document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+                const memberId = deleteModal.dataset.memberId;
+                deleteMember(memberId)
+                    .then(() => {
+                        deleteModal.style.display = 'none';
+                        loadMembers();
+                    })
+                    .catch(error => {
+                        alert('Error deleting member: ' + error.message);
+                    });
+            });
+
+            // Modal close buttons
+            document.querySelectorAll('.close, #cancelBtn, #cancelDeleteBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    memberModal.style.display = 'none';
+                    deleteModal.style.display = 'none';
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === memberModal) {
+                    memberModal.style.display = 'none';
+                }
+                if (e.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                logout().then(() => {
+                    window.location.href = '../index.html';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
