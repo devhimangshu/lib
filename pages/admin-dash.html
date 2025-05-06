@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BookMyFest</title>
+
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <!-- Admin Sidebar -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="admin-dash.html" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="manage-users.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                    <a href="manage-events.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-alt"></i> Manage Events
+                    </a>
+                    <a href="bookings.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-ticket-alt"></i> View Bookings
+                    </a>
+                    <a href="login.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Admin Content Area -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3>Admin Dashboard</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Welcome, Admin</h4>
+                        <p>Manage users, events, and bookings below.</p>
+
+                        <!-- Section: Manage Users -->
+                        <h5 class="mt-5">Manage Users</h5>
+                        <p>View and manage registered users. You can edit or delete accounts as necessary.</p>
+                        <a href="manage-users.html" class="btn btn-primary btn-lg">Go to User Management</a>
+
+                        <!-- Section: Manage Events -->
+                        <h5 class="mt-5">Manage Events</h5>
+                        <p>Add, edit, or remove events from the platform.</p>
+                        <a href="manage-events.html" class="btn btn-primary btn-lg">Go to Event Management</a>
+
+                        <!-- Section: View Bookings -->
+                        <h5 class="mt-5">View Bookings</h5>
+                        <p>View all user bookings for upcoming events.</p>
+                        <a href="bookings.html" class="btn btn-primary btn-lg">Go to Bookings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Firebase and UI logic -->
+    <script src="../js/firebase.js"></script>
+    <script src="../js/ui.js"></script>
+</body>
+
+</html>
