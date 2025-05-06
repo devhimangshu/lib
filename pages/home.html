@@ -8,18 +8,19 @@
 
     <!-- Link to Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Link to FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
+
     <!-- Link to Swiper for sliding banners -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
-    
+
     <!-- Custom Styles -->
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <a class="navbar-brand" href="home.html">
@@ -59,4 +60,105 @@
                         <h2 class="text-white">Book Tickets Instantly</h2>
                         <p class="text-white">Secure your spot at upcoming events with just a click.</p>
                         <a href="signup.html" class="btn btn-warning btn-lg">Get Started</a>
-                    </div
+                    </div>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    <section id="featured-events" class="container my-5">
+        <h2 class="text-center">Featured Events</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="../assets/images/event1.jpg" class="card-img-top" alt="Event 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Music Festival</h5>
+                        <p class="card-text">Join us for an unforgettable music festival. Tickets starting at $50.</p>
+                        <a href="event.html" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="../assets/images/event2.jpg" class="card-img-top" alt="Event 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Food Truck Extravaganza</h5>
+                        <p class="card-text">Explore the best food trucks in the city. Great food, fun vibes!</p>
+                        <a href="event.html" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="../assets/images/event3.jpg" class="card-img-top" alt="Event 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tech Conference 2025</h5>
+                        <p class="card-text">Networking and tech talks with industry leaders. Don't miss it!</p>
+                        <a href="event.html" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call-to-Action Banner -->
+    <section id="cta-banner" class="text-center py-5 bg-dark text-white">
+        <h3>Looking for more events?</h3>
+        <p>Sign up today and get exclusive access to all upcoming events.</p>
+        <a href="signup.html" class="btn btn-warning btn-lg">Sign Up Now</a>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="container my-5">
+        <h2 class="text-center">What Our Users Say</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <p>"BookMyFest made booking tickets so easy. I had a blast at the concert!"</p>
+                    <h5>- Sarah J.</h5>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="testimonial-card">
+                    <p>"The events I attended were amazing, and the platform was very user-friendly."</p>
+                    <h5>- David M.</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer with Social Links -->
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="social-links">
+            <a href="https://facebook.com" class="fab fa-facebook fa-2x mx-2 text-white"></a>
+            <a href="https://twitter.com" class="fab fa-twitter fa-2x mx-2 text-white"></a>
+            <a href="https://instagram.com" class="fab fa-instagram fa-2x mx-2 text-white"></a>
+        </div>
+        <p>&copy; 2025 BookMyFest. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Swiper JS for the banner -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Bootstrap and jQuery for interactivity -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Swiper.js initialization for the sliding banners
+        var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+    </script>
+</body>
+
+</html>
