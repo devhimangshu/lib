@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - BookMyFest</title>
+
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <!-- Wallet Section -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="user-dash.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="profile.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                    <a href="wallet.html" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-wallet"></i> Wallet
+                    </a>
+                    <a href="event.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-alt"></i> Events
+                    </a>
+                    <a href="login.html" class="list-group-item list-group-item-action">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3>Your Wallet</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Current Balance</h4>
+                        <p id="balance" class="lead">$0.00</p>
+                        
+                        <h5>Add Funds</h5>
+                        <form id="add-funds-form">
+                            <div class="form-group">
+                                <label for="amount">Amount to Add</label>
+                                <input type="number" id="amount" class="form-control" placeholder="Enter amount to add" required>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">Add Funds</button>
+                        </form>
+
+                        <h5 class="mt-4">Transaction History</h5>
+                        <ul id="transaction-history" class="list-group">
+                            <!-- Transactions will be populated here dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Firebase and UI logic -->
+    <script src="../js/firebase.js"></script>
+    <script src="../js/ui.js"></script>
+
+    <script>
+        // Example logic for adding funds and transaction history
+        const addFundsForm = document.getElementById('add-funds-form');
+        const balanceDisplay = document.getElementById('balance');
+        const transactionHistory = document.getElementById('transaction-history');
+
+        addFundsForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const amountToAdd = parseFloat(document.getElementById('amount').value);
+            if (amountToAdd <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            // Simulate adding funds to the wallet
+            let currentBalance = parseFloat(balanceDisplay.textContent.substring(1)); // Remove the "$"
+            currentBalance += amountToAdd;
+            balanceDisplay.textContent = `$${currentBalance.toFixed(2)}`;
+
+            // Add the transaction to history
+            const transactionItem = document.createElement('li');
+            transactionItem.classList.add('list-group-item');
+            transactionItem.textContent = `Added $${amountToAdd.toFixed(2)} to wallet.`;
+            transactionHistory.appendChild(transactionItem);
+
+            // Reset the input field
+            document.getElementById('amount').value = '';
+        });
+    </script>
+</body>
+
+</html>
