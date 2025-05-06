@@ -1,28 +1,62 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Library Management System - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Welcome to the Library Management System</h1>
-    <button id="loginBtn">Login</button>
-    <button id="registerBtn">Register</button>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Library Management</h1>
+            <p class="subtitle">BCA Final Year Project</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <div class="admin-note">
+                <p>Admin login: admin@library.com / admin123</p>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <script src="firebase.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    
     <script>
-        // Add event listeners for login/register buttons
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            window.location.href = 'login.html'; // Redirect to login page
-        });
-        document.getElementById('registerBtn').addEventListener('click', function() {
-            window.location.href = 'register.html'; // Redirect to register page
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            login(email, password)
+                .then(() => {
+                    // Redirect handled by auth state change listener in auth.js
+                })
+                .catch(error => {
+                    document.getElementById('loginError').textContent = error.message;
+                });
         });
     </script>
 </body>
