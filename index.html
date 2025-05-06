@@ -1,0 +1,29 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Welcome to the Library Management System</h1>
+    <button id="loginBtn">Login</button>
+    <button id="registerBtn">Register</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        // Add event listeners for login/register buttons
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            window.location.href = 'login.html'; // Redirect to login page
+        });
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            window.location.href = 'register.html'; // Redirect to register page
+        });
+    </script>
+</body>
+</html>
