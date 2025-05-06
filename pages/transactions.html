@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Transaction Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="books.html"><i class="fas fa-book"></i> Books</a></li>
+                <li><a href="members.html"><i class="fas fa-users"></i> Members</a></li>
+                <li><a href="transactions.html" class="active"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>Transaction Management</h2>
+            <div class="action-buttons">
+                <button id="checkoutBtn" class="btn-primary">
+                    <i class="fas fa-book-reader"></i> Checkout Book
+                </button>
+                <button id="returnBtn" class="btn-primary">
+                    <i class="fas fa-book"></i> Return Book
+                </button>
+                <div class="search-box">
+                    <input type="text" id="transactionSearch" placeholder="Search transactions...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <div id="transactionListSection">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="returned">Returned</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="lost">Lost</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sortBy">Sort By:</label>
+                    <select id="sortBy">
+                        <option value="date_newest">Date (Newest)</option>
+                        <option value="date_oldest">Date (Oldest)</option>
+                        <option value="due_date">Due Date</option>
+                        <option value="member_name">Member Name</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Book</th>
+                            <th>Checkout Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Fine</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Checkout Modal -->
+        <div id="checkoutModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Checkout Book</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="memberSelect">Select Member</label>
+                                <select id="memberSelect" required>
+                                    <option value="">Choose Member</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bookSelect">Select Book</label>
+                                <select id="bookSelect" required>
+                                    <option value="">Choose Book</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Checkout Date</label>
+                                <input type="date" id="checkoutDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" id="dueDate" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelCheckoutBtn">Cancel</button>
+                            <button type="submit" class="btn-primary">Complete Checkout</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Modal -->
+        <div id="returnModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Return Book</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="returnForm">
+                        <div class="form-group">
+                            <label for="transactionSelect">Select Transaction</label>
+                            <select id="transactionSelect" required>
+                                <option value="">Select Active Transaction</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">Return Date</label>
+                            <input type="date" id="returnDate" required>
+                        </div>
+                        <div class="fine-details">
+                            <p>Due Date: <span id="dueDateDisplay"></span></p>
+                            <p>Days Overdue: <span id="daysOverdue">0</span></p>
+                            <p>Calculated Fine: ₹<span id="calculatedFine">0</span></p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelReturnBtn">Cancel</button>
+                            <button type="submit" class="btn-primary">Process Return</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/books.js"></script>
+    <script src="../js/members.js"></script>
+    <script src="../js/transactions.js"></script>
+
+    <script>
+        // DOM Elements
+        const transactionsTableBody = document.getElementById('transactionsTableBody');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const returnBtn = document.getElementById('returnBtn');
+        const transactionSearch = document.getElementById('transactionSearch');
+        const statusFilter = document.getElementById('statusFilter');
+        const sortBy = document.getElementById('sortBy');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+        
+        // Modal Elements
+        const checkoutModal = document.getElementById('checkoutModal');
+        const returnModal = document.getElementById('returnModal');
+        const memberSelect = document.getElementById('memberSelect');
+        const bookSelect = document.getElementById('bookSelect');
+        const transactionSelect = document.getElementById('transactionSelect');
+
+        // Pagination variables
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+        let allTransactions = [];
+        let filteredTransactions = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTransactions();
+            setupEventListeners();
+        });
+
+        function loadTransactions() {
+            getActiveTransactions().then(transactions => {
+                allTransactions = transactions;
+                applyFilters();
+            }).catch(error => {
+                alert('Error loading transactions: ' + error.message);
+            });
+        }
+
+        function applyFilters() {
+            const statusValue = statusFilter.value;
+            
+            filteredTransactions = allTransactions.filter(transaction => {
+                if (statusValue === 'all') return true;
+                if (statusValue === 'overdue') {
+                    return transaction.status === 'active' && 
+                           new Date(transaction.dueDate) < new Date();
+                }
+                return transaction.status === statusValue;
+            });
+
+            const searchTerm = transactionSearch.value.trim().toLowerCase();
+            if (searchTerm) {
+                filteredTransactions = filteredTransactions.filter(transaction => {
+                    return transaction.memberName?.toLowerCase().includes(searchTerm) ||
+                           transaction.bookTitle?.toLowerCase().includes(searchTerm);
+                });
+            }
+
+            const sortValue = sortBy.value;
+            filteredTransactions.sort((a, b) => {
+                switch (sortValue) {
+                    case 'date_newest':
+                        return b.checkoutDate - a.checkoutDate;
+                    case 'date_oldest':
+                        return a.checkoutDate - b.checkoutDate;
+                    case 'due_date':
+                        return a.dueDate - b.dueDate;
+                    case 'member_name':
+                        return a.memberName.localeCompare(b.memberName);
+                    default:
+                        return 0;
+                }
+            });
+
+            currentPage = 1;
+            renderTransactionsTable();
+            updatePagination();
+        }
+
+        async function renderTransactionsTable() {
+            transactionsTableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * transactionsPerPage;
+            const endIndex = Math.min(startIndex + transactionsPerPage, filteredTransactions.length);
+            const transactionsToDisplay = filteredTransactions.slice(startIndex, endIndex);
+
+            if (transactionsToDisplay.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="8" class="no-results">No transactions found</td>`;
+                transactionsTableBody.appendChild(row);
+                return;
+            }
+
+            for (const transaction of transactionsToDisplay) {
+                const member = await getMemberById(transaction.memberId);
+                const book = await getBookById(transaction.bookId);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${book.title}</td>
+                    <td>${new Date(transaction.checkoutDate).toLocaleDateString()}</td>
+                    <td>${new Date(transaction.dueDate).toLocaleDateString()}</td>
+                    <td>${transaction.returnDate ? 
+                        new Date(transaction.returnDate).toLocaleDateString() : 'N/A'}</td>
+                    <td class="${transaction.status}">${transaction.status.toUpperCase()}</td>
+                    <td>₹${transaction.fineAmount || 0}</td>
+                    <td class="actions">
+                        ${transaction.status === 'active' ? `
+                        <button class="btn-icon return-btn" data-id="${transaction.id}" title="Return">
+                            <i class="fas fa-book"></i>
+                        </button>` : ''}
+                        <button class="btn-icon view-btn" data-id="${transaction.id}" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                transactionsTableBody.appendChild(row);
+            }
+
+            // Add event listeners
+            document.querySelectorAll('.return-btn').forEach(btn => {
+                btn.addEventListener('click', () => openReturnModal(btn.dataset.id));
+            });
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => viewTransactionDetails(btn.dataset.id));
+            });
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+        }
+
+        async function openCheckoutModal() {
+            // Load active members and available books
+            const [members, books] = await Promise.all([
+                getMembersByStatus('active'),
+                getBooksByStatus('available')
+            ]);
+
+            // Populate member select
+            memberSelect.innerHTML = '<option value="">Choose Member</option>';
+            members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.name;
+                memberSelect.appendChild(option);
+            });
+
+            // Populate book select
+            bookSelect.innerHTML = '<option value="">Choose Book</option>';
+            books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book.id;
+                option.textContent = `${book.title} (${book.availableCopies} available)`;
+                option.disabled = book.availableCopies < 1;
+                bookSelect.appendChild(option);
+            });
+
+            // Set default dates
+            const today = new Date();
+            const dueDate = new Date();
+            dueDate.setDate(today.getDate() + CHECKOUT_PERIOD);
+            
+            document.getElementById('checkoutDate').value = today.toISOString().split('T')[0];
+            document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
+
+            checkoutModal.style.display = 'block';
+        }
+
+        async function openReturnModal(transactionId) {
+            const transaction = await getTransactionById(transactionId);
+            const member = await getMemberById(transaction.memberId);
+            const book = await getBookById(transaction.bookId);
+
+            // Populate transaction details
+            document.getElementById('dueDateDisplay').textContent = 
+                new Date(transaction.dueDate).toLocaleDateString();
+            
+            const returnDateInput = document.getElementById('returnDate');
+            returnDateInput.value = new Date().toISOString().split('T')[0];
+            
+            // Calculate fine
+            returnDateInput.addEventListener('change', () => {
+                const returnDate = new Date(returnDateInput.value);
+                const dueDate = new Date(transaction.dueDate);
+                
+                if (returnDate > dueDate) {
+                    const diffTime = returnDate - dueDate;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const fine = Math.min(diffDays * FINE_RATE, MAX_FINE);
+                    
+                    document.getElementById('daysOverdue').textContent = diffDays;
+                    document.getElementById('calculatedFine').textContent = fine;
+                } else {
+                    document.getElementById('daysOverdue').textContent = 0;
+                    document.getElementById('calculatedFine').textContent = 0;
+                }
+            });
+
+            returnModal.style.display = 'block';
+        }
+
+        function setupEventListeners() {
+            // Checkout/Return buttons
+            checkoutBtn.addEventListener('click', openCheckoutModal);
+            returnBtn.addEventListener('click', () => {
+                loadActiveTransactionsForReturn();
+                returnModal.style.display = 'block';
+            });
+
+            // Search and filters
+            transactionSearch.addEventListener('input', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            sortBy.addEventListener('change', applyFilters);
+
+            // Checkout form submission
+            document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const memberId = memberSelect.value;
+                const bookId = bookSelect.value;
+                const checkoutDate = document.getElementById('checkoutDate').value;
+                const dueDate = document.getElementById('dueDate').value;
+
+                try {
+                    await checkoutBook(bookId, memberId);
+                    alert('Book checked out successfully!');
+                    checkoutModal.style.display = 'none';
+                    loadTransactions();
+                } catch (error) {
+                    alert('Error checking out book: ' + error.message);
+                }
+            });
+
+            // Return form submission
+            document.getElementById('returnForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const transactionId = transactionSelect.value;
+                const returnDate = document.getElementById('returnDate').value;
+
+                try {
+                    const fineAmount = await returnBook(transactionId, returnDate);
+                    if (fineAmount > 0) {
+                        alert(`Book returned successfully with fine: ₹${fineAmount}`);
+                    } else {
+                        alert('Book returned successfully!');
+                    }
+                    returnModal.style.display = 'none';
+                    loadTransactions();
+                } catch (error) {
+                    alert('Error returning book: ' + error.message);
+                }
+            });
+
+            // Modal close handlers
+            document.querySelectorAll('.close, .btn-secondary').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    checkoutModal.style.display = 'none';
+                    returnModal.style.display = 'none';
+                });
+            });
+
+            // Pagination
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTransactionsTable();
+                    updatePagination();
+                }
+            });
+            nextPageBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTransactionsTable();
+                    updatePagination();
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                logout().then(() => window.location.href = '../index.html');
+            });
+        }
+
+        async function loadActiveTransactionsForReturn() {
+            const activeTransactions = await getActiveTransactions();
+            transactionSelect.innerHTML = '<option value="">Select Active Transaction</option>';
+            
+            for (const transaction of activeTransactions) {
+                const member = await getMemberById(transaction.memberId);
+                const book = await getBookById(transaction.bookId);
+                
+                const option = document.createElement('option');
+                option.value = transaction.id;
+                option.textContent = `${member.name} - ${book.title}`;
+                transactionSelect.appendChild(option);
+            }
+        }
+
+        async function getTransactionById(transactionId) {
+            const snapshot = await dbRef.transactions.child(transactionId).once('value');
+            return { id: snapshot.key, ...snapshot.val() };
+        }
+    </script>
+</body>
+</html>
