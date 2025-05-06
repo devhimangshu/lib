@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="books.html"><i class="fas fa-book"></i> Books</a></li>
+                <li><a href="members.html"><i class="fas fa-users"></i> Members</a></li>
+                <li><a href="transactions.html"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="welcome-section">
+            <h2>Welcome, <span id="adminName">Administrator</span></h2>
+            <p id="currentDate"></p>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <h3>Total Books</h3>
+                <p id="totalBooks">0</p>
+                <a href="books.html" class="stat-link">View All Books <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="stat-card">
+                <h3>Available Books</h3>
+                <p id="availableBooks">0</p>
+                <a href="books.html?status=available" class="stat-link">View Available <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="stat-card">
+                <h3>Total Members</h3>
+                <p id="totalMembers">0</p>
+                <a href="members.html" class="stat-link">View All Members <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="stat-card">
+                <h3>Active Checkouts</h3>
+                <p id="activeCheckouts">0</p>
+                <a href="transactions.html?status=active" class="stat-link">View Checkouts <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="stat-card">
+                <h3>Overdue Books</h3>
+                <p id="overdueBooks">0</p>
+                <a href="transactions.html?status=overdue" class="stat-link">View Overdue <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="stat-card">
+                <h3>Outstanding Fines</h3>
+                <p id="totalFines">₹0</p>
+                <a href="reports.html#fines" class="stat-link">View Fines <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <section class="recent-transactions">
+                <div class="section-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="transactions.html" class="view-all">View All</a>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Book</th>
+                                <th>Checkout Date</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="quick-actions">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="actions-grid">
+                    <a href="books.html?action=add" class="action-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add New Book</span>
+                    </a>
+                    <a href="members.html?action=add" class="action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Register Member</span>
+                    </a>
+                    <a href="transactions.html?action=checkout" class="action-card">
+                        <i class="fas fa-book-reader"></i>
+                        <span>Checkout Book</span>
+                    </a>
+                    <a href="transactions.html?action=return" class="action-card">
+                        <i class="fas fa-book"></i>
+                        <span>Return Book</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <section class="recently-added">
+            <div class="section-header">
+                <h2>Recently Added Books</h2>
+                <a href="books.html" class="view-all">View All</a>
+            </div>
+            <div class="books-grid" id="recentBooks">
+                <!-- Filled by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/books.js"></script>
+    <script src="../js/members.js"></script>
+    <script src="../js/transactions.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            // Load admin name
+            getCurrentUserData().then(user => {
+                document.getElementById('adminName').textContent = user.name;
+            });
+
+            // Load statistics
+            Promise.all([
+                getAllBooks(),
+                getAllMembers(),
+                getActiveTransactions(),
+                getOverdueTransactions(),
+                dbRef.members.once('value')
+            ]).then(([booksSnapshot, membersSnapshot, activeTransactions, overdueTransactions, allMembersSnapshot]) => {
+                // Total books
+                document.getElementById('totalBooks').textContent = booksSnapshot.length;
+
+                // Available books
+                const availableBooks = booksSnapshot.filter(book => book.status === BOOK_STATUS.AVAILABLE).length;
+                document.getElementById('availableBooks').textContent = availableBooks;
+
+                // Total members
+                document.getElementById('totalMembers').textContent = membersSnapshot.length;
+
+                // Active checkouts
+                document.getElementById('activeCheckouts').textContent = activeTransactions.length;
+
+                // Overdue books
+                document.getElementById('overdueBooks').textContent = overdueTransactions.length;
+
+                // Calculate total fines
+                let totalFines = 0;
+                allMembersSnapshot.forEach(member => {
+                    totalFines += member.val().currentFines || 0;
+                });
+                document.getElementById('totalFines').textContent = `₹${totalFines}`;
+
+                // Load recent transactions (last 5)
+                const recentTransactions = activeTransactions.slice(0, 5);
+                const tbody = document.getElementById('transactionsTable');
+                tbody.innerHTML = '';
+
+                recentTransactions.forEach(transaction => {
+                    Promise.all([
+                        getMemberById(transaction.memberId),
+                        getBookById(transaction.bookId)
+                    ]).then(([member, book]) => {
+                        const row = document.createElement('tr');
+                        
+                        const dueDate = new Date(transaction.dueDate);
+                        const isOverdue = dueDate < now;
+                        
+                        row.innerHTML = `
+                            <td>${member.name}</td>
+                            <td>${book.title}</td>
+                            <td>${new Date(transaction.checkoutDate).toLocaleDateString()}</td>
+                            <td class="${isOverdue ? 'overdue' : ''}">${dueDate.toLocaleDateString()}</td>
+                            <td class="${isOverdue ? 'overdue' : 'active'}">
+                                ${isOverdue ? 'OVERDUE' : 'ACTIVE'}
+                            </td>
+                        `;
+                        
+                        tbody.appendChild(row);
+                    });
+                });
+
+                // Load recently added books (last 4)
+                const recentBooks = booksSnapshot.slice(0, 4);
+                const booksGrid = document.getElementById('recentBooks');
+                booksGrid.innerHTML = '';
+
+                recentBooks.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <div class="book-cover" style="background-color: ${getRandomColor()};">
+                            ${book.title.charAt(0)}${book.title.split(' ')[1]?.charAt(0) || ''}
+                        </div>
+                        <h3>${book.title}</h3>
+                        <p class="book-author">${book.author}</p>
+                        <p class="book-status ${book.status}">${book.status.toUpperCase()}</p>
+                        <a href="books.html?id=${book.id}" class="book-link">View Details</a>
+                    `;
+                    booksGrid.appendChild(bookCard);
+                });
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                logout().then(() => {
+                    window.location.href = '../index.html';
+                });
+            });
+
+            // Helper function for random colors
+            function getRandomColor() {
+                const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+        });
+    </script>
+</body>
+</html>
