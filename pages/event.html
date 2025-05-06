@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - BookMyFest</title>
+
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <!-- Event Header Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <img src="../assets/images/event1.jpg" class="img-fluid" alt="Event Image">
+            </div>
+            <div class="col-md-6">
+                <h2>Music Festival 2025</h2>
+                <p><strong>Date:</strong> December 20, 2025</p>
+                <p><strong>Location:</strong> Central Park, New York City</p>
+                <p><strong>Description:</strong> Join us for an unforgettable music festival featuring live performances from top artists. Don't miss out on this amazing experience!</p>
+                <div class="mb-4">
+                    <h4>Ticket Options</h4>
+                    <select class="form-control mb-2" id="ticket-type">
+                        <option value="regular">Regular Ticket - $50</option>
+                        <option value="vip">VIP Ticket - $100</option>
+                    </select>
+                    <input type="number" id="ticket-quantity" class="form-control mb-2" placeholder="Quantity" min="1" max="10">
+                </div>
+                <button class="btn btn-success btn-lg" id="book-ticket">Book Ticket</button>
+            </div>
+        </div>
+
+        <!-- Event Details Section -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h3>Event Schedule</h3>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>2:00 PM:</strong> Opening Ceremony</li>
+                    <li class="list-group-item"><strong>4:00 PM:</strong> Artist 1 Performance</li>
+                    <li class="list-group-item"><strong>6:00 PM:</strong> Artist 2 Performance</li>
+                    <li class="list-group-item"><strong>8:00 PM:</strong> Closing Ceremony</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Event Map Section -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h3>Event Location</h3>
+                <div id="map" class="border" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Firebase and UI logic -->
+    <script src="../js/firebase.js"></script>
+    <script src="../js/ui.js"></script>
+
+    <!-- Google Maps API for showing location (Replace with actual API key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+
+    <script>
+        // Initialize Google Map (Example: Set location to Central Park, NYC)
+        function initMap() {
+            var location = { lat: 40.785091, lng: -73.968285 };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                center: location
+            });
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        }
+
+        // Booking Ticket Logic
+        document.getElementById("book-ticket").addEventListener("click", function () {
+            var ticketType = document.getElementById("ticket-type").value;
+            var quantity = document.getElementById("ticket-quantity").value;
+
+            if (quantity > 0) {
+                alert(`You have booked ${quantity} ${ticketType} ticket(s).`);
+            } else {
+                alert("Please select a valid quantity.");
+            }
+        });
+    </script>
+</body>
+
+</html>
